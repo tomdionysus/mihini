@@ -76,13 +76,13 @@ Offsets are always signed 32 bit from the current IP.
 16 bit mask, low byte D0-D7, high byte A0-A7 e.g 0001000110000010 ==  D1,D7,A0,A4
 
 In assembly, may be written:
-	* D0
-	* D0,D1
-	* D0/D1
-	* D0-D2,D4
-	* D0-D2/D4
-	* D0/A0/D1/A1
-	* D2-D6,D0/A4-A5/D1
+* D0
+* D0,D1
+* D0/D1
+* D0-D2,D4
+* D0-D2/D4
+* D0/A0/D1/A1
+* D2-D6,D0/A4-A5/D1
 
 ### Conditional (ccc)
 
