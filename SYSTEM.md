@@ -16,4 +16,4 @@ Arguments:
 
 ## 0x3 - VM_SYSCALL_PUTC
 Arguments:
-	* (valueb) ASCII char to print
+	* (value8) ASCII char to print
