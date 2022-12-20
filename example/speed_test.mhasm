@@ -1,0 +1,32 @@
+		load.l #1000000 d7
+
+loop	move.b d1 d2
+		add.b d2 d3
+		xor.b d3 d4
+		move.b d4 d5
+
+		move.b d1 d2
+		add.b d2 d3
+		move.b d3 d4
+		move.b d4 d5
+
+		xor.b d1 d2
+		move.b d2 d3
+		move.b d3 d4
+		move.b d4 d5
+
+		move.b d1 d2
+		move.b d2 d3
+		xor.b d3 d4
+		add.b d4 d5
+
+		move.b d1 d2
+		move.b d2 d3
+		xor.b d3 d4
+		add.b d4 d5
+
+		dec.l d7
+		beq end
+		bra loop
+
+end		stop

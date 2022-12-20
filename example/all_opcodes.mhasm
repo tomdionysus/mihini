@@ -1,0 +1,57 @@
+// Mihini Disassembler (v1)
+// source: bin/_all_opcodes.mihini (v1)
+// date: 15:44:54 NZDT Fri 16 Dec 2022
+
+label1	nop
+		load.X #0xf d0
+		move.b d1 d2
+		push.l d0-d7/a0-a1,a3-a6 -(a7)
+		pop.l (a7)+ d0-d7/a1,a3,a5
+		inc.l d5
+		dec.w d2
+		clr.b (a0)
+		addi.w #0xffff a6
+		add.l d0 (a6)+
+		subi.w #0x6 -(a2)
+		sub.b (a0)+ (a1)+
+		muli.x #0x8 d0
+		mul.x (a0) d1
+		divi.x #0x88 d0 d1
+		div.x d1 d2 (a0)
+		andi.w #0xffff a6
+		and.x d0 (a1)
+		ori.l #0xa5a5 a6
+		or.w -(a5) (a6)+
+		xori.w #0x1 d1
+		xor.b d2 d3
+		lsli.w #0x1 d1
+		lsl.l d2 d3
+		lsri.x #0x1 d1
+		lsr.l d2 d3
+		roli.w #0x1 d1
+		rol.b d2 d3
+		rori.w #0x1 d1
+		ror.l d2 d3
+		not.x d1
+		tst.w #0x8 d0
+		cmpi.x #0xfafafafafafafafa d3
+		cmp.w d0 d1
+		bra label1
+		beq label1
+		bne label1
+		bcb label1
+		blt label1
+		bgt label1
+		ble label1
+		bge label1
+		jmpi #0x200000
+		jmpm (a1)
+		jmp label1
+		calli #0x200000
+		callm (a0)
+		call label10
+		ret
+		alloc #0x400 a0
+		free a0
+		stop
+		syscall #255

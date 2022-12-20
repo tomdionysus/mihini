@@ -1,0 +1,41 @@
+//
+// Meri Kirihimete!
+//
+// Author: Tom Cully <mail@tomcully.com
+// Date: 20 Dec 2022
+//
+
+start	refer txt -(a7)
+		syscall #2  			// print()
+
+		refer gfx a0
+		load.l #15 d0
+
+row		load.l #15 d1
+		move.w (a0)+ d2
+
+col		tst.w d1 d2
+		bne pts
+
+		load.b #32 -(a7)		// putc(' ')
+		syscall #3
+		bra nxt
+		
+pts		load.b #'*' -(a7)		// putc('*')
+		syscall #3
+
+nxt		dec.l d1
+		bcb col
+
+		load.b #'\n' -(a7)
+		syscall #3
+
+		dec.l d0
+		bcb row
+
+end 	stop
+
+gfx		data.w 0x0810 0x0c30 0x0e70 0x0ff0 0xffff 0x7ffe 0x3ffc 0x1ff8
+		data.w 0x1ff8 0x3ffc 0x7ffe 0xffff 0x0ff0 0x0e70 0x0c30 0x0810
+
+txt		data.b "Meri Kirihimete!\n\n" 0x00

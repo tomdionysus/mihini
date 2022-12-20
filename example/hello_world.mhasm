@@ -1,0 +1,8 @@
+// printf test
+
+start	refer welcome -(a7)
+		syscall #0x02
+
+		stop
+
+welcome	data.b "Hello World!\n" 0x00

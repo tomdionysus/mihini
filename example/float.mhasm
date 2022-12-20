@@ -1,0 +1,44 @@
+// Mihini Disassembler (v1)
+// source: bin/_float.mihini (v1)
+// date: 15:44:54 NZDT Fri 16 Dec 2022
+
+label1	fload.l #0.6168705534069904 d0
+		fcast.l d0 d1
+		fround.l d0 d1
+		fadd.l d1 d2
+		fsub.l d3 d4
+		fmul.l d5 d6
+		fdiv.l d7 (a0)
+		fmod.l a1 -(a2)
+		fsqrt.l a3 a4
+		fexp.l a5 a6
+		flog.l d0 d1
+		flog10.l d0 d1
+		fceil.l d0 d1
+		ffloor.l d0 d1
+		fpow.l d0 d1
+		fsin.l d0 d1
+		fcos.l d0 d1
+		ftan.l d0 d1
+
+loop	call sub1
+		call sub2
+		call sub3
+		call sub4
+		bra loop
+
+sub1	move.l d0 d0
+		xor.x d0 d0
+		ret
+
+sub2	move.l d0 d0
+		xor.x d0 d0
+		ret
+
+sub3	move.l d0 d0
+		xor.x d0 d0
+		ret
+
+sub4	move.l d0 d0
+		xor.x d0 d0
+		ret
