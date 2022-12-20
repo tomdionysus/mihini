@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
 
 	time_t t = time(NULL);
 
-   /* Output the current year into the result string */
-   strftime(buffer, sizeof(buffer), "%H:%M:%S %Z %a %d %b %Y", localtime(&t));
+   	/* Output the current year into the result string */
+   	strftime(buffer, sizeof(buffer), "%H:%M:%S %Z %a %d %b %Y", localtime(&t));
 
 	// Write asm header
 	fprintf(state.dest, "// Mihini Disassembler (v%d)\n", MIHINI_VERSION); state.line_number++;
@@ -113,6 +113,8 @@ bool first_pass(uint8_t opcode, state_t* state) {
 		printf("error %s:%d unknown opcode %02x\n", state->source_filename, state->line_number, opcode);
 	}
 	char *opcode_asm = (char*)node->value;
+
+	// printf("%08x %s\n", state->pos, opcode_asm);
 
 	switch(opcode) {
 		// No arguments
@@ -249,6 +251,9 @@ bool first_pass(uint8_t opcode, state_t* state) {
 			read_uint8(state);
 			read_uint8(state);
 			break;
+
+		default:
+			printf("error %s:%d unknown opcode %02x\n", state->source_filename, state->line_number, opcode);
 	}
 
 	return false;
@@ -279,7 +284,6 @@ bool disassemble(uint8_t opcode, state_t* state) {
 	
 	if(node == NULL) {
 		printf("error %s:%d unknown opcode %02x\n", state->source_filename, state->line_number, opcode);
-		return 0;
 	}
 
 	char *opcode_asm = (char*)node->value;
@@ -311,7 +315,7 @@ bool disassemble(uint8_t opcode, state_t* state) {
 			if(node!=NULL) {
 				fprintf(state->dest, "\t%s label%d\n", opcode_asm, (uint32_t)(uint64_t)node->value); state->line_number++;
 			} else {
-				printf("error %s:%d bxx/jmp - cannot find label for position %d\n", state->source_filename, state->line_number, state->pos + offset + 4);
+				printf("error %s:%d %s - cannot find label for position %d\n", state->source_filename, state->line_number, opcode_asm, state->pos + offset + 4);
 			}
 			break;
 
