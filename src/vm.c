@@ -139,7 +139,7 @@ uint64_t vm_read_register_or_memory(uint8_t reg, uint8_t width, vmstate_t *state
 			state->registers.N[reg] += vm_width_to_bytes(width);
 			return val;
 		default:
-			printf("vm_read_register_or_memory: UNKNOWN MODE %02x\n", mode);
+			fprintf(stderr, "vm_read_register_or_memory: UNKNOWN MODE %02x\n", mode);
 			return 0;
 	}
 }
@@ -463,16 +463,18 @@ void vm_opcode_nop(uint8_t width, vmstate_t *state) {
 	debug("nop\n");
 }
 void vm_opcode_load(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
+	state->condition = 0;
 	debug("load %d %x\n", value, reg);
 	// Load immediate into register or memory
 	vm_write_register_or_memory(reg, value, width, state);
-	if(value==0) state->condition = CR_EQUAL_ZERO;
+	if(value==0) state->condition |= CR_EQUAL_ZERO;
 }
 void vm_opcode_move(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
+	state->condition = 0;
 	uint64_t val = vm_read_register_or_memory(rega, width, state);
 	debug("move rega:%d regb:%d regaval: %02x\n", rega, regb, val);
 	vm_write_register_or_memory(regb, val, width, state);
-	if(val == 0) state->condition = CR_EQUAL_ZERO;
+	if(val == 0) state->condition |= CR_EQUAL_ZERO;
 }
 void vm_opcode_push(uint8_t width, uint16_t regset, uint8_t reg, vmstate_t *state) {
 	debug("push %x %d\n", regset, reg);
@@ -491,8 +493,8 @@ void vm_opcode_pop(uint8_t width, uint16_t regset, uint8_t reg, vmstate_t *state
 	state->condition = 0;
 }
 void vm_opcode_inc(uint8_t width, uint8_t reg, vmstate_t *state) {
-	debug("inc %x %d\n", reg);
 	state->condition = 0;
+	debug("inc %x %d\n", reg);
 	uint64_t val = vm_read_register_or_memory(reg, width, state);
 	uint64_t mask = vm_width_to_mask(width);
 	// Detect overflow/carry
@@ -502,9 +504,9 @@ void vm_opcode_inc(uint8_t width, uint8_t reg, vmstate_t *state) {
 	if(val == 0) state->condition |= CR_EQUAL_ZERO;
 }
 void vm_opcode_dec(uint8_t width, uint8_t reg, vmstate_t *state) {
-	debug("dec");
 	state->condition = 0;
 	uint64_t val = vm_read_register_or_memory(reg, width, state) & vm_width_to_mask(width);
+	debug("dec reg: %d val %d -> %d", reg, val, val-1);
 	// Detect underflow/borrow
 	if(val == 0) state->condition |= CR_CARRY_BORROW;
 	val--;
@@ -514,14 +516,13 @@ void vm_opcode_dec(uint8_t width, uint8_t reg, vmstate_t *state) {
 
 void vm_opcode_clr(uint8_t width, uint8_t reg, vmstate_t *state) {
 	debug("clr");
-	state->condition = 0;
 	vm_write_register_or_memory(reg, 0, width, state);
 	state->condition = CR_EQUAL_ZERO;
 }
 
 void vm_opcode_addi(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
-	debug("addi");
 	state->condition = 0;
+	debug("addi");
 	value = vm_read_register_or_memory(reg, width, state) + value;
 	vm_write_register_or_memory(reg, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
@@ -737,7 +738,7 @@ void vm_opcode_bra(uint8_t width, int32_t offset, vmstate_t *state) {
 	state->ip += offset + 4;
 }
 void vm_opcode_beq(uint8_t width, int32_t offset, vmstate_t *state) {
-	debug("beq");
+	debug("beq CR_EQUAL_ZERO: %d", (state->condition & CR_EQUAL_ZERO) ? 1 : 0);
 	if((state->condition & CR_EQUAL_ZERO)) state->ip += offset + 4;
 }
 void vm_opcode_bne(uint8_t width, int32_t offset, vmstate_t *state) {
@@ -745,23 +746,23 @@ void vm_opcode_bne(uint8_t width, int32_t offset, vmstate_t *state) {
 	if(!(state->condition & CR_EQUAL_ZERO)) state->ip += offset + 4;
 }
 void vm_opcode_bcb(uint8_t width, int32_t offset, vmstate_t *state) {
-	debug("bcb");
-	if(!(state->condition & CR_CARRY_BORROW)) state->ip += offset + 4;
+	debug("bcb CR_CARRY_BORROW: %d", (state->condition & CR_CARRY_BORROW) ? 1 : 0);
+	if(state->condition & CR_CARRY_BORROW) state->ip += offset + 4;
 }
 void vm_opcode_blt(uint8_t width, int32_t offset, vmstate_t *state) {
-	debug("blt");
+	debug("blt CR_LESS_THAN: %d", (state->condition & CR_LESS_THAN) ? 1 : 0);
 	if((state->condition & CR_LESS_THAN)) state->ip += offset + 4;
 }
 void vm_opcode_bgt(uint8_t width, int32_t offset, vmstate_t *state) {
-	debug("bgt");
+	debug("bgt CR_GREATER_THAN: %d", (state->condition & CR_GREATER_THAN) ? 1 : 0);
 	if((state->condition & CR_GREATER_THAN)) state->ip += offset + 4;
 }
 void vm_opcode_ble(uint8_t width, int32_t offset, vmstate_t *state) {
-	debug("ble");
+	debug("ble CR_EQUAL_ZERO: %d CR_LESS_THAN: %d ", (state->condition & CR_EQUAL_ZERO) ? 1 : 0, (state->condition & CR_LESS_THAN) ? 1 : 0);
 	if((state->condition & (CR_EQUAL_ZERO | CR_LESS_THAN))) state->ip += offset + 4;
 }
 void vm_opcode_bge(uint8_t width, int32_t offset, vmstate_t *state) {
-	debug("bge");
+	debug("ble CR_EQUAL_ZERO: %d CR_GREATER_THAN: %d ", (state->condition & CR_EQUAL_ZERO) ? 1 : 0, (state->condition & CR_GREATER_THAN) ? 1 : 0);
 	if((state->condition & (CR_EQUAL_ZERO | CR_GREATER_THAN))) state->ip += offset + 4;
 }
 void vm_opcode_jmpi(uint8_t width, uint32_t address, vmstate_t *state) {

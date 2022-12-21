@@ -1,34 +1,33 @@
 //
 // Meri Kirihimete!
 //
-// Author: Tom Cully <mail@tomcully.com
+// Author: Tom Cully <mail@tomcully.com>
 // Date: 20 Dec 2022
 //
 
 start	refer gfx a0
-		load.b #15 d0
+		load.b #16 d0			// row counter
 
-row		load.b #15 d1
-		move.w (a0)+ d2
+row		load.b #16 d1			// col counter
+		move.w (a0)+ d2			// Get row data word
 
-col		tst.w d1 d2
-		bne pts
-
+col		tst.w d1 d2				// Test bit col of data word
+		bne pts					// if set, print a star
 		load.b #32 -(a7)		// putc(' ')
 		syscall #3
 		bra nxt
-		
 pts		load.b #'*' -(a7)		// putc('*')
 		syscall #3
 
-nxt		dec.b d1
-		bcb col
+nxt		dec.b d1				// dec col counter
+		bcb nwl					// if -1, do newline 
+		bra col					// print next char
 
-		load.b #'\n' -(a7)
-		syscall #3
+nwl		load.b #'\n' -(a7)		// print a newline
+		syscall #3				
 
-		dec.b d0
-		bcb row
+		dec.b d0				// dec row counter 
+		bne row					// if not zero, goto next row
 
 end 	stop
 

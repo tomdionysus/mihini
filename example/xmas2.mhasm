@@ -1,0 +1,40 @@
+//
+// Meri Kirihimete!
+//
+// Author: Tom Cully <mail@tomcully.com>
+// Date: 20 Dec 2022
+//
+
+start	refer gfx a0
+		load.b #42 d1			// initial char *
+		load.b #17 d2			// reset row counter
+		
+loop	move.b (a0)+ d0			// Current run count
+		beq end					// If zero, end
+		cmpi.b #32 d1			// If char is space
+		beq abc					// set to *
+		load.b #32 d1			// else set to space
+
+print	move.b d1 -(a7)			// putc(char)
+		syscall #3
+
+		dec.b d2				// dec Row counter
+		beq newl				// if zero newline
+
+next	dec.b d0				// dec run count
+		beq loop				// if zero next run
+
+		bra print				// next char
+
+abc		load.b #42 d1
+		bra print
+
+newl	load.b #10 -(a7)		// do a newline
+		syscall #3
+		load.b #17 d2			// reset row counter
+		bra next
+
+end 	stop
+
+gfx		data.b 4 1 7 1 8 2 5 2 8 3 3 3 8 4 1 4 4 17 1 15 3 13 5 11 
+		data.b 5 13 3 15 1 17 4 4 1 4 8 3 3 3 8 2 5 2 8 1 7 1 4 0
