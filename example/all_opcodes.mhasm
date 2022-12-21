@@ -53,5 +53,5 @@ label1	nop
 		ret
 		alloc #0x400 a0
 		free a0
-		stop
 		syscall #255
+		stop

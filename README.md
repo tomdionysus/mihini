@@ -8,11 +8,11 @@ Mihini is virtual machine for embedded use.
 
 ## Components
 
-* `mihini` VM frontend (alpha)
+* `mhvm` VM frontend (alpha)
 * `mhasm` assembler (beta)
 * `mhdasm` disassembler (beta)
 
-* `libmihini` VM library (todo)
+* `libmihini` VM library (alpha)
 
 ## Building
 
@@ -39,6 +39,9 @@ By default, the VM has 1Mb of memory and a 4kbyte stack.
 
 `mhdasm <outputbytecodefile> <assembly.mhasm>` 
 
+## mhvm Virtual Machine
+
+`mhdasm <outputbytecodefile>` 
 
 ## VM Layout
 
@@ -58,6 +61,3 @@ The `mihini_tests` executable is built along with everything else into the `bin`
 ```
 mihini_tests
 ```
-
-
-
