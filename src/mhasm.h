@@ -6,9 +6,6 @@
 #include "dll.h"
 #include "stree.h"
 
-// Version
-#define MIHINI_VERSION 0x0001
-
 // A segment of a source line
 typedef struct segment {
 	uint16_t start;				// Start offset for line

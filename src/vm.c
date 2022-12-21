@@ -176,6 +176,18 @@ void vm_write_register_or_memory(uint8_t reg, uint64_t value, uint8_t width, vms
 	}
 }
 
+uint8_t vm_width_to_bits(uint8_t width) {
+	switch(width) {
+		case WIDTH_8:  return 8;
+		case WIDTH_16: return 16;
+		case WIDTH_32: return 32;
+		case WIDTH_64: return 64;
+		default:
+			fprintf(stderr, "vm_width_to_bits: Unknown WIDTH");
+			return 0;
+	}
+}
+
 uint8_t vm_width_to_bytes(uint8_t width) {
 	switch(width) {
 		case WIDTH_8:  return 1;
@@ -462,6 +474,7 @@ void vm_opcode_nop(uint8_t width, vmstate_t *state) {
 	// Do Nothing.
 	debug("nop\n");
 }
+
 void vm_opcode_load(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
 	state->condition = 0;
 	debug("load %d %x\n", value, reg);
@@ -469,6 +482,7 @@ void vm_opcode_load(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state
 	vm_write_register_or_memory(reg, value, width, state);
 	if(value==0) state->condition |= CR_EQUAL_ZERO;
 }
+
 void vm_opcode_move(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	state->condition = 0;
 	uint64_t val = vm_read_register_or_memory(rega, width, state);
@@ -476,6 +490,7 @@ void vm_opcode_move(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state)
 	vm_write_register_or_memory(regb, val, width, state);
 	if(val == 0) state->condition |= CR_EQUAL_ZERO;
 }
+
 void vm_opcode_push(uint8_t width, uint16_t regset, uint8_t reg, vmstate_t *state) {
 	debug("push %x %d\n", regset, reg);
 	for(uint8_t i=0; i<16; i++) {
@@ -484,6 +499,7 @@ void vm_opcode_push(uint8_t width, uint16_t regset, uint8_t reg, vmstate_t *stat
 	}
 	state->condition = 0;
 }
+
 void vm_opcode_pop(uint8_t width, uint16_t regset, uint8_t reg, vmstate_t *state) {
 	debug("pop %x %d\n", regset, reg);
 	for(uint8_t i=15; i>=0; i--) {
@@ -492,6 +508,7 @@ void vm_opcode_pop(uint8_t width, uint16_t regset, uint8_t reg, vmstate_t *state
 	}
 	state->condition = 0;
 }
+
 void vm_opcode_inc(uint8_t width, uint8_t reg, vmstate_t *state) {
 	state->condition = 0;
 	debug("inc %x %d\n", reg);
@@ -503,6 +520,7 @@ void vm_opcode_inc(uint8_t width, uint8_t reg, vmstate_t *state) {
 	vm_write_register_or_memory(reg, val, width, state);
 	if(val == 0) state->condition |= CR_EQUAL_ZERO;
 }
+
 void vm_opcode_dec(uint8_t width, uint8_t reg, vmstate_t *state) {
 	state->condition = 0;
 	uint64_t val = vm_read_register_or_memory(reg, width, state) & vm_width_to_mask(width);
@@ -567,6 +585,7 @@ void vm_opcode_mul(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) 
 	vm_write_register_or_memory(regb, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
+
 void vm_opcode_divi(uint8_t width, uint64_t value, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	debug("divi");
 	state->condition = 0;
@@ -586,6 +605,7 @@ void vm_opcode_div(uint8_t width, uint8_t rega, uint8_t regb, uint8_t regc, vmst
 	vm_write_register_or_memory(regb, arga / argb, width, state);
 	vm_write_register_or_memory(regc, arga % argb, width, state);
 }
+
 void vm_opcode_andi(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
 	debug("andi");
 	state->condition = 0;
@@ -601,6 +621,7 @@ void vm_opcode_and(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) 
 	vm_write_register_or_memory(regb, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
+
 void vm_opcode_ori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
 	debug("ori");
 	state->condition = 0;
@@ -616,6 +637,7 @@ void vm_opcode_or(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	vm_write_register_or_memory(regb, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
+
 void vm_opcode_xori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
 	debug("xori");
 	state->condition = 0;
@@ -623,6 +645,7 @@ void vm_opcode_xori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state
 	vm_write_register_or_memory(reg, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
+
 void vm_opcode_xor(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	debug("xor");
 	state->condition = 0;
@@ -630,13 +653,15 @@ void vm_opcode_xor(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) 
 	vm_write_register_or_memory(regb, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
-void vm_opcode_lsli(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
+
+void vm_opcode_lsli(uint8_t width, uint8_t bits, uint8_t reg, vmstate_t *state) {
 	debug("lsli");
 	state->condition = 0;
-	value = vm_read_register_or_memory(reg, width, state) << value;
+	uint64_t value = vm_read_register_or_memory(reg, width, state) << bits;
 	vm_write_register_or_memory(reg, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
+
 void vm_opcode_lsl(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	debug("lsl");
 	state->condition = 0;
@@ -644,13 +669,15 @@ void vm_opcode_lsl(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) 
 	vm_write_register_or_memory(regb, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
-void vm_opcode_lsri(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
+
+void vm_opcode_lsri(uint8_t width, uint8_t bits, uint8_t reg, vmstate_t *state) {
 	debug("lsri");
 	state->condition = 0;
-	value = vm_read_register_or_memory(reg, width, state) >> value;
+	uint64_t value = vm_read_register_or_memory(reg, width, state) >> bits;
 	vm_write_register_or_memory(reg, value, width, state);
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
+
 void vm_opcode_lsr(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	debug("lsr");
 	state->condition = 0;
@@ -659,20 +686,51 @@ void vm_opcode_lsr(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) 
 	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
 
-void vm_opcode_roli(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
+void vm_opcode_roli(uint8_t width, uint8_t bits, uint8_t reg, vmstate_t *state) {
 	debug("roli");
+	state->condition = 0;
+	uint64_t mask = vm_width_to_mask(width); 
+	uint64_t value = vm_read_register_or_memory(reg, width, state) & mask;
+	uint8_t bitwidth = vm_width_to_bits(width); 
+	value = ((value << bits) | (value >> (bitwidth-bits))) & mask;
+	vm_write_register_or_memory(reg, value, width, state);
+	if(value == 0) state->condition = CR_EQUAL_ZERO;
+
 }
 
 void vm_opcode_rol(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	debug("rol");
+	state->condition = 0;
+	uint64_t mask = vm_width_to_mask(width); 
+	uint64_t bits = vm_read_register_or_memory(rega, WIDTH_8, state);
+	uint64_t value = vm_read_register_or_memory(regb, width, state) & mask;
+	uint8_t bitwidth = vm_width_to_bits(width); 
+	value = ((value << bits) | (value >> (bitwidth-bits))) & mask;
+	vm_write_register_or_memory(regb, value, width, state);
+	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
 
-void vm_opcode_rori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
+void vm_opcode_rori(uint8_t width, uint8_t bits, uint8_t reg, vmstate_t *state) {
 	debug("rori");
+	state->condition = 0;
+	uint64_t mask = vm_width_to_mask(width); 
+	uint64_t value = vm_read_register_or_memory(reg, width, state) & mask;
+	uint8_t bitwidth = vm_width_to_bits(width); 
+	value = ((value >> bits) | (value << (bitwidth-bits))) & mask;
+	vm_write_register_or_memory(reg, value, width, state);
+	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
 
 void vm_opcode_ror(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
 	debug("ror");
+	state->condition = 0;
+	uint64_t mask = vm_width_to_mask(width); 
+	uint64_t bits = vm_read_register_or_memory(rega, WIDTH_8, state);
+	uint64_t value = vm_read_register_or_memory(regb, width, state) & mask;
+	uint8_t bitwidth = vm_width_to_bits(width); 
+	value = ((value >> bits) | (value << (bitwidth-bits))) & mask;
+	vm_write_register_or_memory(regb, value, width, state);
+	if(value == 0) state->condition = CR_EQUAL_ZERO;
 }
 
 void vm_opcode_not(uint8_t width, uint8_t reg, vmstate_t *state) {

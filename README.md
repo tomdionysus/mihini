@@ -24,24 +24,21 @@ make
 ```
 
 ## mihini VM
-
-`mihini <bytecodefile>`
-
-Execute the 
-
 By default, the VM has 1Mb of memory and a 4kbyte stack.
+
+`mhvm <bytecodefile>`
 
 ## mhasm Assembler
 
-`mhasm <assembly.mhasm> <outputbytecodefile>` 
+`mhasm <assembly.mhasm> <bytecodefile>` 
 
 ## mhdasm Disassembler
 
-`mhdasm <outputbytecodefile> <assembly.mhasm>` 
+`mhdasm <bytecodefile> <assembly.mhasm>` 
 
 ## mhvm Virtual Machine
 
-`mhdasm <outputbytecodefile>` 
+`mhdasm <bytecodefile>` 
 
 ## VM Layout
 

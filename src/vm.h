@@ -106,6 +106,7 @@ void vm_write_memory(uint32_t address, uint64_t value, uint8_t width, vmstate_t 
 uint64_t vm_read_register_or_memory(uint8_t reg, uint8_t width, vmstate_t *state);
 void vm_write_register_or_memory(uint8_t reg, uint64_t value, uint8_t width, vmstate_t *state);
 
+uint8_t vm_width_to_bits(uint8_t width);
 uint8_t vm_width_to_bytes(uint8_t width);
 uint64_t vm_width_to_mask(uint8_t width);
 
@@ -138,13 +139,13 @@ void vm_opcode_ori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state)
 void vm_opcode_or(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state);
 void vm_opcode_xori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state);
 void vm_opcode_xor(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state);
-void vm_opcode_lsli(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state);
+void vm_opcode_lsli(uint8_t width, uint8_t value, uint8_t reg, vmstate_t *state);
 void vm_opcode_lsl(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state);
-void vm_opcode_lsri(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state);
+void vm_opcode_lsri(uint8_t width, uint8_t value, uint8_t reg, vmstate_t *state);
 void vm_opcode_lsr(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state);
-void vm_opcode_roli(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state);
+void vm_opcode_roli(uint8_t width, uint8_t value, uint8_t reg, vmstate_t *state);
 void vm_opcode_rol(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state);
-void vm_opcode_rori(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state);
+void vm_opcode_rori(uint8_t width, uint8_t value, uint8_t reg, vmstate_t *state);
 void vm_opcode_ror(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state);
 void vm_opcode_not(uint8_t width, uint8_t reg, vmstate_t *state);
 void vm_opcode_tsti(uint8_t width, uint8_t bit, uint8_t reg, vmstate_t *state);
