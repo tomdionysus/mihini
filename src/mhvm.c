@@ -6,8 +6,8 @@
 #include <memory.h>
 #include <stdlib.h>
 
+#include "mhvm.h"
 #include "endian_shim.h"
-#include "mihini.h"
 #include "vm.h"
 
 int main(int argc, char *argv[]) {

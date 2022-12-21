@@ -15,7 +15,7 @@ target_link_libraries(mhasm mihini)
 add_executable(mhdasm src/mhdasm.c)
 target_link_libraries(mhdasm mihini)
 
-add_executable(mhvm src/mihini.c)
+add_executable(mhvm src/mhvm.c)
 target_link_libraries(mhvm mihini)
 
 add_executable(mihini_tests tests/asm_test.c)
