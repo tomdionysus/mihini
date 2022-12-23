@@ -6,10 +6,13 @@
 
 char print_width(uint8_t width) {
 	switch(width) {
-		case 0: return 'b';
-		case 1: return 'w';
-		case 2: return 'l';
-		case 3: return 'x';
+		case WIDTH_8: return 'b';
+		case WIDTH_16: return 'w';
+		case WIDTH_32: return 'l';
+		case WIDTH_64: return 'x';
+		default:
+			fprintf(stderr,"print_width: unknown width %d\n", width);
+			return 0;
 	}
 }
 

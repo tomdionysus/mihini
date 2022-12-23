@@ -3,7 +3,6 @@
 * D0-D7 - 8x 64 bit Data Registers
 * A0-A7 - 8x 32 bit Address Registers (A7 is SP, Stack pointer)
 * Memory Allocation/Deallocation
-* Direct interface to the RP2040 GPIO/SPI/I2C/UART
 
 ## Condition Register
 

@@ -772,8 +772,38 @@ void vm_opcode_cmp(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) 
 	if(varb < vara) state->condition |= CR_LESS_THAN;
 }
 
-void vm_opcode_fload(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {}
-void vm_opcode_fcast(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {}
+void vm_opcode_fload(uint8_t width, uint64_t value, uint8_t reg, vmstate_t *state) {
+	switch(width) {
+		case WIDTH_8:
+			fprintf(stderr,"vm_opcode_fload: floating point does not support .b 8 bit width\n");
+			break;
+		case WIDTH_16:
+		case WIDTH_32:
+		case WIDTH_64:
+			vm_write_register_or_memory(reg, value, width, state);
+			break;
+	}
+}
+void vm_opcode_fcast(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {
+	uint64_t value = vm_read_register_or_memory(rega, width, state);
+	float f1;
+	double f2;
+	switch(width) {
+		case WIDTH_8:
+			fprintf(stderr,"vm_opcode_fcast: floating point does not support .b 8 bit width\n");
+			break;
+		case WIDTH_16:
+			break;
+		case WIDTH_32:
+			f1 = (float)value;
+			vm_write_register_or_memory(rega, *(uint64_t*)(&f1), width, state);
+			break;
+		case WIDTH_64:
+			f2 = (double)value;
+			vm_write_register_or_memory(rega, *(uint64_t*)(&f2), width, state);
+			break;
+	}	
+}
 void vm_opcode_fround(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {}
 void vm_opcode_fadd(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {}
 void vm_opcode_fsub(uint8_t width, uint8_t rega, uint8_t regb, vmstate_t *state) {}
